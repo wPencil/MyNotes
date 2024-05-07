@@ -1,5 +1,8 @@
 # 0. Load packages--------------------------------------------------------------
-
+library(dplyr)
+library(magrittr)
+library(data.table)
+library(MyPackage) # My personal package
 
 # 1. Import data----------------------------------------------------------------
 
