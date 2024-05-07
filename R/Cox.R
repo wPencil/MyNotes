@@ -10,7 +10,7 @@ data <- data.frame(
   treatment = sample(c("A", "B", "C"), n, replace = TRUE),
   gender = sample(c("Male", "Female"), n, replace = TRUE),
   success = sample(c(0, 1), n, replace = TRUE),  # 0 stand for failure, 1 stand for success
-  time = runif(n, 0, 10)  # 随机生成生存时间
+  time = runif(n, 0, 10)  # survival time
 )
 
 # 2. Preprocess data------------------------------------------------------------
