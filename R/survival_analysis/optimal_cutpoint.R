@@ -3,7 +3,7 @@ library(survival)
 library(survminer)
 
 # 1. Example data: myeloma------------------------------------------------------
-view(myeloma)
+View(myeloma)
 
 # 2. Determine the optimal cutpoint of variables("DEPDC1") and categorize-------
 res.cat <- surv_cutpoint(myeloma, time = "time", event = "event", variables = "DEPDC1") %>%
