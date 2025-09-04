@@ -1,0 +1,49 @@
+mye <- readRDS("../03_myeloid/01_data/processed/myeloid_identified.rds")
+
+mye_counts <- as.data.frame(mye@assays$RNA$counts) %>%
+  filter(, rownames(mye) %in% names(risk_model$coefficients)) %>%
+  t() %>%
+  as.data.frame()
+head(mye_counts)
+
+risk_score_mye <- predict(risk_model, type = "risk", mye_counts)
+mye$risk_score <- risk_score_mye
+
+data <- data.frame("hcc_type" = mye$HCC_type,
+                   "cell_clusters" = mye$identify_myeloid,
+                   "risk_score" = mye$risk_score)
+head(data)
+
+tiff("02_figures/risk_score_scRNA_myeloid.tiff", width = 2500, height = 2000, res = 400,
+     compression = "lzw")
+ggboxplot(data, x = "cell_clusters", y = "risk_score", fill = "cell_clusters",
+	        ylab = "log(TPM + 1)",
+	        xlab = "",
+	        legend.title = "",
+	        palette = dittoColors(),
+	        width = 0.6
+          )+
+  NoLegend()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+  ggtitle("risk scores")+theme(plot.title = element_text(hjust = 0.5))
+dev.off()
+
+tiff("02_figures/risk_score_scRNA_myeloid_boxplot.tiff", width = 3000, height = 2000, res = 400,
+     compression = "lzw")
+ggboxplot(data, x = "cell_clusters", y = "risk_score", fill = "hcc_type", 
+	        ylab = "log(TPM + 1)",
+	        xlab = "",
+	        legend.title = "HCC type",
+	        palette = c("#3C4A93", "#C7263B"),
+	        width = 0.6
+          )+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+  ggtitle("risk score") + theme(plot.title = element_text(hjust = 0.5))+
+  stat_compare_means(aes(group = hcc_type),
+                     method = "wilcox.test",
+                     symnum.args = list(cutpoints = c(0, 0.001, 0.01, 0.05, 1), 
+                                        symbols = c("***", "**", "*", "NA")
+                                        ),
+                     label = "p.signif")
+  
+dev.off()
